@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>THE REAL TICKET THING</title>
+		<style>
+			#instructionsSlide{
+				visibility: visible;
+				background-color: rgb(30,200,20);
+			}
+			#generalSlide{
+				visibility: hidden;
+				background-color: rgb(30,200,20);
+			}
+			#endSlide{
+				visibility: hidden;
+				background-color: rgb(30,200,20);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="instructionsSlide">
+			<h1>Alek's Ticket thing</h1>
+			<p>CLICK THE BUTTONS</p>
+			<button id="start">START</button>
+		</div>
+		<div id="generalSlide">
+			<img src="http://www.web2carz.com/images/articles/201306/ticket_1371268861_300x200.jpg">
+			<h2 id='ticketValue'>10 bucks<h2>
+			<button id="skip">Skip</button>
+			<button id="pick">Pick</button>
+		</div>
+		<div id="endSlide">
+			<img src="https://i.ytimg.com/vi/S4UG_l-CHF4/maxresdefault.jpg">
+			<h1>You chose the best ticket. Here is a cool Panda to reward you for your physcological abilities.<h2>
+		</div>
+		<script>
+			var startButton=document.getElementById("start");
+			var skipButton=document.getElementById("skip");
+			var pickButton=document.getElementById("pick");
+			var ticketValue=document.getElementById("ticketValue");
+			var instructionsSlide=document.getElementById("instructionsSlide");
+			var generalSlide=document.getElementById("generalSlide");
+			var endSlide=document.getElementById("endSlide");
+
+			var startFunction=function(){
+				generalSlide.style.visibility="visible";
+				instructionsSlide.style.visibility="hidden";
+				endSlide.style.visibility="hidden";
+			};
+			var skipFunction=function(){
+				value=Math.floor((Math.random() * 100) + 1);
+				ticketValue.textContent=value.toString()+"bucks";
+			};
+			var pickFunction=function(){
+				generalSlide.style.visibility="hidden";
+				instructionsSlide.style.visibility="hidden";
+				endSlide.style.visibility="visible";
+			};
+			
+			startButton.addEventListener("click",startFunction);
+			skipButton.addEventListener("click",skipFunction);
+			pickButton.addEventListener("click",pickFunction);
+
+		</script>
+
+
+	</body>
+</html>
