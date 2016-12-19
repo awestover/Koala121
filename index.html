@@ -6,30 +6,36 @@
 			#instructionsSlide{
 				visibility: visible;
 				background-color: rgb(30,200,20);
+                float:top;
 			}
 			#generalSlide{
 				visibility: hidden;
-				background-color: rgb(30,200,20);
+				background-color: rgb(30,100,20);
+                float:top;
 			}
 			#endSlide{
 				visibility: hidden;
-				background-color: rgb(30,200,20);
+				background-color: rgb(60,200,20);
 			}
+            .slide{
+            	position:absolute;
+                width:100%;
+            }
 		</style>
 	</head>
 	<body>
-		<div id="instructionsSlide">
+		<div id="instructionsSlide"; class="slide";>
 			<h1>Alek's Ticket thing</h1>
 			<p>CLICK THE BUTTONS</p>
 			<button id="start">START</button>
 		</div>
-		<div id="generalSlide">
+		<div id="generalSlide"; class="slide";>
 			<img src="http://www.web2carz.com/images/articles/201306/ticket_1371268861_300x200.jpg">
 			<h2 id='ticketValue'>10 bucks<h2>
 			<button id="skip">Skip</button>
 			<button id="pick">Pick</button>
 		</div>
-		<div id="endSlide">
+		<div id="endSlide" class="slide";>
 			<img src="https://i.ytimg.com/vi/S4UG_l-CHF4/maxresdefault.jpg">
 			<h1>You chose the best ticket. Here is a cool Panda to reward you for your physcological abilities.<h2>
 		</div>
