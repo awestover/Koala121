@@ -22,11 +22,11 @@
 				visibility: hidden;
 				background-color: rgb(30,200,20);
 			}
-            		.slide{
+            .slide{
 				position:absolute;
 				width:100%;
 				float:top;
-			    }
+			}
 		</style>
 	</head>
 	<body>
@@ -39,6 +39,7 @@
 			<h2 id='ticketValue'>10 bucks<h2>
 			<button id="skip">Skip</button>
 			<button id="pick">Pick</button>
+			<img src="http://www.transparentbackground.net/wp-content/uploads/2016/03/passport_flight_tickets_transparent_background_isolated.jpg">
 		</div>
 		<div id="resultSlide" class="slide";>
 			<h1>You chose the best ticket. Here is a cool Panda to reward you for your physcological abilities.<h2>
@@ -59,20 +60,43 @@
 			var endSlide=document.getElementById("endSlide");
 			var resultSlide=document.getElementById("resultSlide");
 			var curTicSeq=[];
+			//later make user specify this quantity
+			var numOfSeq=2;
+			var curSeqNum=0;
+			var seqLength=10;
+			var seqCurElement=0;
+			var range = [10,20];
 			
+			var newRanTicSeq=function(seqLength,range){
+				curTicSeq=[];
+				for(var i=0;i<seqLength;i++){
+					curTicSeq.push(random(range[0],range[1]););
+				}
+			};
 			var startFunction=function(){
 				generalSlide.style.visibility="visible";
 				instructionsSlide.style.visibility="hidden";
 				endSlide.style.visibility="hidden";
+				resultSlide.style.visibility="hidden";
+				newRanTicSeq(seqLength,range);
+				var curSeqNum+=1;
 			};
 			var skipFunction=function(){
-				value=Math.floor((Math.random() * 100) + 1);
-				ticketValue.textContent=value.toString()+"bucks";
+				if(seqCurElement<seqLength){
+					value=curTicSeq[seqCurElement];
+					ticketValue.textContent=value.toString()+"bucks";
+					seqCurElement+=1;
+				}
+				if(seqCurElement>=seqLength){
+					alert("You can't skip again, this is the last element of the sequence. You must press 'pick'.")
+				}
+				
 			};
 			var pickFunction=function(){
 				generalSlide.style.visibility="hidden";
 				instructionsSlide.style.visibility="hidden";
-				endSlide.style.visibility="visible";
+				endSlide.style.visibility="hidden";
+				resultSlide.style.visibility="visible";
 			};
 			var nextSeqFunction=function(){
 				generalSlide.style.visibility="hidden";
@@ -84,7 +108,6 @@
 			skipButton.addEventListener("click",skipFunction);
 			pickButton.addEventListener("click",pickFunction);
 			nextSeqButton.addEventListener("click",nextSeqFunction);
-
 		</script>
 	</body>
 </html>
