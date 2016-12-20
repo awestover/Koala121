@@ -20,6 +20,11 @@
 				visibility: hidden;
 				background-color: rgb(60,200,20);
 			}
+			#resultSlide{
+				visibility: visible;
+				background-color: rgb(30,200,20);
+                		float:top;
+			}
             		.slide{
 				position:absolute;
 				width:100%;
@@ -33,24 +38,30 @@
 			<button id="start">START</button>
 		</div>
 		<div id="generalSlide"; class="slide";>
-			<img src="http://www.web2carz.com/images/articles/201306/ticket_1371268861_300x200.jpg">
 			<h2 id='ticketValue'>10 bucks<h2>
 			<button id="skip">Skip</button>
 			<button id="pick">Pick</button>
 		</div>
+		<div id="resultSlide" class="slide";>
+			<h1>You chose the best ticket. Here is a cool Panda to reward you for your physcological abilities.<h2>
+			<button id="nextSeq">Next Sequence</button>
+		</div>
 		<div id="endSlide" class="slide";>
 			<img src="https://i.ytimg.com/vi/S4UG_l-CHF4/maxresdefault.jpg">
-			<h1>You chose the best ticket. Here is a cool Panda to reward you for your physcological abilities.<h2>
+			<h1>Thanks for playing.<h2>
 		</div>
 		<script>
 			var startButton=document.getElementById("start");
 			var skipButton=document.getElementById("skip");
 			var pickButton=document.getElementById("pick");
 			var ticketValue=document.getElementById("ticketValue");
+			var nextSeq=document.getElementById("nextSeq");
 			var instructionsSlide=document.getElementById("instructionsSlide");
 			var generalSlide=document.getElementById("generalSlide");
 			var endSlide=document.getElementById("endSlide");
-
+			var resultSlide=document.getElementById("resultSlide");
+			var curTicSeq=[];
+			
 			var startFunction=function(){
 				generalSlide.style.visibility="visible";
 				instructionsSlide.style.visibility="hidden";
@@ -65,10 +76,16 @@
 				instructionsSlide.style.visibility="hidden";
 				endSlide.style.visibility="visible";
 			};
+			var nextSeqFunction=function(){
+				generalSlide.style.visibility="hidden";
+				instructionsSlide.style.visibility="hidden";
+				endSlide.style.visibility="visible";
+			};
 			
 			startButton.addEventListener("click",startFunction);
 			skipButton.addEventListener("click",skipFunction);
 			pickButton.addEventListener("click",pickFunction);
+			nextSeqButton.addEventListener("click",nextSeqFunction);
 
 		</script>
 	</body>
