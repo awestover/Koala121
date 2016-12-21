@@ -47,12 +47,12 @@
 			<img id="ticketPic" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Persian_Cat_UK.jpg/640px-Persian_Cat_UK.jpg">
 		</div>
 		<div id="resultSlide" class="slide";>
-			<h1 id="ticketPlace">You chose the best ticket. <br> Here is a cool Panda to reward you for your physcological abilities.</h1>
+			<h1 id="ticketPlace">You chose a ticket. Great Job.</h1>
 			<button id="nextSeq">Next Sequence</button>
 		</div>
 		<div id="endSlide" class="slide";>
+			<h1>You have completed your sequences. <br>Thanks for playing.</h1>
 			<img src="https://i.ytimg.com/vi/S4UG_l-CHF4/maxresdefault.jpg">
-			<h1>Thanks for playing.</h1>
 		</div>
 		<script>
 			var startButton=document.getElementById("start");
@@ -80,11 +80,26 @@
 				}
 				return curTicSeq;
 			};
-			var startFunction=function(){
-				generalSlide.style.visibility="visible";
+			var hideAllBut=function(exclude){
+				generalSlide.style.visibility="hidden";
 				instructionsSlide.style.visibility="hidden";
 				endSlide.style.visibility="hidden";
 				resultSlide.style.visibility="hidden";
+				if(exclude===0||exclude==='instructionsSlide'){
+					instructionsSlide.style.visibility="visible";
+				}
+				else if(exclude===1||exclude==='generalSlide'){
+					generalSlide.style.visibility="visible";
+				}
+				if(exclude===2||exclude==='resultSlide'){
+					resultSlide.style.visibility="visible";
+				}
+				if(exclude===3||exclude==='endSlide'){
+					endSlide.style.visibility="visible";
+				}
+			};
+			var startFunction=function(){
+				hideAllBut('generalSlide');
 				curTicSeq=newRanTicSeq(seqLength,range);
 				curSeqNum+=1;
 			};
@@ -99,17 +114,16 @@
 				}
 			};
 			var pickFunction=function(){
-				generalSlide.style.visibility="hidden";
-				instructionsSlide.style.visibility="hidden";
-				endSlide.style.visibility="hidden";
-				resultSlide.style.visibility="visible";
-
+				hideAllBut('resultSlide');
 			};
 			var nextSeqFunction=function(){
-				generalSlide.style.visibility="visible";
-				resultSlide.style.visibility="hidden";
-				instructionsSlide.style.visibility="hidden";
-				endSlide.style.visibility="hidden";
+				if(curSeqNum<=numOfSeq){
+					hideAllBut('generalSlide');
+					curSeqNum+=1;
+				}
+				if(curSeqNum>numOfSeq){
+					hideAllBut('endSlide');
+				}
 			};
 			
 			startButton.addEventListener("click",startFunction);
