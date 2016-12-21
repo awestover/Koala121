@@ -55,8 +55,6 @@
 			<img src="https://i.ytimg.com/vi/S4UG_l-CHF4/maxresdefault.jpg">
 		</div>
 		<script>
-			//Add name input
-			//Add numOfSeq numberpicking
 			var startButton=document.getElementById("start");
 			var skipButton=document.getElementById("skip");
 			var pickButton=document.getElementById("pick");
@@ -112,6 +110,7 @@
 				hideAllBut('generalSlide');
 				curTicSeq=newRanTicSeq(seqLength,range);
 				curSeqNum+=1;
+				numOfSeq=prompt("How many sequences of tickets would you like to preform?(10 choices per sequence).");
 			};
 			var skipFunction=function(){
 				if(seqCurElement<seqLength){
