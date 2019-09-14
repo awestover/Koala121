@@ -1,0 +1,974 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Alek's Game</title>    
+        <script src= "http://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js">
+        </script>
+        <style>
+        canvas{position: relative; left:175px;}
+        body{background-color: black}
+        h1{background-color: red; color:black; position: relative; left:225px; width:300px}
+        h2{background-color: green; color:black; position: relative; left:270px; width:210px;}
+        h3{background-color: black; color:black; position: relative; left:270px; width:210px;}
+        </style>
+    </head>
+    <body>
+        <h1>A Ping Pong Game</h1>alek
+        <canvas id = "canvas" width =1000 height =800></canvas>
+        <h2>**功夫熊猫 很酷.**</h2>
+        <h3>It also has a 5 star rating.</h3>
+    <script>// position of the ball
+    var canx = 400;
+    var cany = 400;
+  	var canvas = document.getElementById("canvas");
+    var processing = new Processing(canvas, function(processing) {
+        processing.size(canx, cany);
+        processing.background(0xFFF);
+        var mouseIsPressed = false;
+        processing.mousePressed = function () {
+        	mouseIsPressed = true; 
+        };
+        processing.mouseReleased = function () {
+        	mouseIsPressed = false; 
+        };
+        var keyIsPressed = false;
+        processing.keyPressed = function () { 
+        	keyIsPressed = true; 
+        };
+        processing.keyReleased = function () { 
+        	keyIsPressed = false; 
+        };
+        function getImage(s) {
+            var url = "https://www.kasandbox.org/programming-images/" + s + ".png";
+            processing.externals.sketch.imageCache.add(url);
+            return processing.loadImage(url);
+        }
+        with (processing) { 
+/*****************************************************************
+     _|      _|      _|_|_|_|    _|  _|      _|
+   _| _|     _|      _|          _| _|       _|
+  _|   _|    _|      _|_|_|      _|_|        _|
+ _|_|_|_|_|  _|      _|          _| _|       _|
+ _|      _|  _|      _|          _|  _|      
+ _|      _|  _|_|_|  _|_|_|_|    _|   _|     _|
+ _|      _|
+*************************************************************/
+var textxpos = 205;
+var c = createFont("monospace");
+var p1Y = 200;
+var p2Y = 200;
+var player1Score = 0;
+var player2Score = 0;
+var ball;
+var BallResetVel = 4;
+var gameStarted = false;
+var ws = 0;
+var ar = 0;
+var mo = 0;
+var twop = 0;
+var play = 0;
+var instruct = 0;
+var win=0;
+var p1name = ['P','l','a','y','e','r', '1'];
+var p2name = ['P','l','a','y','e','r', '2'];
+/*Constants*/
+var compSpeed = 3;
+var PLAYER_MOVE_SPEED = 4.5;
+var BALL_SPEED = 10;
+var p1h = 100;
+var p2h = 100;
+var MoneySize = 40;
+var MoneyColor = [0,0,0];
+angleMode = "degrees";
+/*Blob stuff*/
+var eyesBlink;
+var angle = 38; 
+var sinY;
+var dubBounce;
+var radius = 19;
+var blobY = 228;
+var blobX = 325;
+var blobhair;
+var blobspeedincrease = 0.07;
+var p1color = [255,255,255];
+var p2color = [255,255,255];
+var ballcolor = [255,255,255];
+var GameBGColor = [0,0,0];
+var num = [];
+var numX = 60;
+var p1extraSpeed = 0;
+var p2extraSpeed = 0;
+var yuans = 0;
+/*Ball class and ball*/
+var Ball = function() {
+    this.radius = 12;
+    this.x=canx/2;
+    this.y=cany/2;
+    this.xvel=BallResetVel;
+    this.yvel=BallResetVel;
+};
+Ball.prototype.draw= function() {
+    fill(ballcolor[0], ballcolor[1], ballcolor[2]);
+    noStroke();
+    ellipse(this.x,this.y,this.radius,this.radius);
+};
+Ball.prototype.move= function(){
+    this.x+=this.xvel;
+    this.y+=this.yvel;
+    if(this.y<0){
+        ball.yvel=ball.yvel/abs(ball.yvel)*-BallResetVel;
+        if(this.yvel>0.77){
+            this.yvel+=random(-0.5,2.1);
+        }
+    }
+    if(this.y>cany){
+        ball.yvel=ball.yvel/abs(ball.yvel)*-BallResetVel;
+        if(this.yvel>0.77){
+            this.yvel-=random(-0.5,2.1);
+        }
+    }
+    if(this.x<0){
+        player2Score++;
+        ball.x = canx/2;
+        ball.y= cany/2;
+        ball.xvel=ball.xvel/abs(ball.xvel)*-BallResetVel;
+        ball.yvel=ball.yvel/abs(ball.yvel)*-BallResetVel;
+        gameStarted=false;
+    }
+    if(this.x>canx){
+        player1Score++;
+        ball.x = 200;
+        ball.y= 200;
+        ball.xvel=ball.xvel/abs(ball.xvel)*-BallResetVel;
+        ball.yvel=ball.yvel/abs(ball.yvel)*-BallResetVel;
+        gameStarted=false;
+    }
+    if (this.x - this.radius < 20 && this.x + this.radius > 0){
+        if (dist(0, this.y, 0, p1Y)<p1h/2 + this.radius){
+            if (this.x > 10) {
+                this.x = 20 + this.radius;
+            }
+            else if (this.x < 10) {
+                this.x = -1* this.radius;
+            }
+            ball.xvel=ball.xvel/abs(ball.xvel)*-BallResetVel;
+            if(this.xvel>0.77){
+                this.xvel+=random(-0.5,2.1);
+            }
+        }
+    }
+    if (this.x -this.radius < canx*39/40 + 10 && this.x + this.radius > canx*39/40- 10){
+        if (dist(0, this.y, 0, p2Y)<p2h/2 + this.radius) {
+            if (this.x > 390) {
+                this.x = canx*39/40 + this.radius + 10;
+            }
+            else if (this.x < canx*39/40) {
+                this.x = canx*39/40 - this.radius - 10;
+            }
+            ball.xvel=ball.xvel/abs(ball.xvel)*-BallResetVel;
+            if(this.xvel>0.77){
+                this.xvel+=random(-0.5,2.1);
+            }
+        }
+    }
+};
+ball = new Ball();
+/*Paddle stuff*/
+var drawScores = function() {
+    fill(255, 255, 255);
+    textSize(20);
+    for(var i = 0; i<p1name.length; i++){
+        text(p1name[i],i*10+10,25);
+    }
+    text( " :" + round(player1Score), p1name.length*10+16, 25);
+    for(var i = 0; i<p2name.length; i++){
+        text(p2name[i],i*10+210,25);
+    }
+    text(" :" + round(player2Score), p2name.length*10+215, 25);
+};
+var computercontrol = function() {
+    if (p2Y-ball.y <0) {
+        p2Y += compSpeed;
+    }
+    else if (p2Y-ball.y >0) {
+        p2Y -= compSpeed;
+    }
+};
+var movePlayer2Up = function() {
+    p2Y -= PLAYER_MOVE_SPEED;
+};
+var movePlayer2Down = function() {
+    p2Y += PLAYER_MOVE_SPEED;
+};
+var mousecontrolp1 = function(){
+    if (p1Y-mouseY < 0) {
+        p1Y += PLAYER_MOVE_SPEED+p1extraSpeed;
+    }
+    if (p1Y-mouseY>0) {
+        p1Y -= PLAYER_MOVE_SPEED+p1extraSpeed;
+    }
+};
+var mousecontrolp2 = function(){
+    if (p2Y-mouseY < 0) {
+        p2Y += PLAYER_MOVE_SPEED+p2extraSpeed;
+    }
+    if (p2Y-mouseY>0) {
+        p2Y -= PLAYER_MOVE_SPEED+p2extraSpeed;
+    }
+};
+var movePlayer1Up = function() {
+    p1Y -= PLAYER_MOVE_SPEED+p1extraSpeed;
+};
+var movePlayer1Down = function() {
+    p1Y += PLAYER_MOVE_SPEED+p1extraSpeed;
+};
+var drawPlayers = function() {
+    //Constrain the player movement
+    p1Y = constrain(p1Y,0,cany);
+    p2Y = constrain(p2Y,0,cany);
+    rectMode(CENTER);
+    fill(p1color[0], p1color[1], p1color[2]);
+    rect(20, p1Y, 20, p1h);
+    fill(p2color[0], p2color[1], p2color[2]);
+    rect(cany-20, p2Y, 20, p2h);
+};
+/*Makes button class*/
+var Button = function(config) {
+    this.x = config.x || 0;
+    this.y = config.y || 0;
+    this.width = config.width || 80;
+    this.height = config.height || 50;
+    this.label = config.label || "Click";
+    this.color = config.color || color(207, 85, 85);
+    this.TexSize = config.TexSize || 19;
+    this.onClick = config.onClick || function() {};
+};
+Button.prototype.draw = function() {
+    if (this.isMouseInside() && mouseIsPressed) {
+        fill(255, 255, 255);
+    }
+    else {
+       fill(this.color); 
+    }
+    rectMode(CENTER);
+    rect(this.x, this.y, this.width, this.height, 5);
+    fill(0, 0, 0);
+    textSize(this.TexSize);
+    textAlign(CENTER, CENTER);
+    text(this.label, this.x, this.y);
+};
+Button.prototype.isMouseInside = function() {
+    return mouseX > this.x-this.width/2 &&
+           mouseX < (this.x + this.width/2) &&
+           mouseY > this.y - this.height/2 &&
+           mouseY < (this.y + this.height/2);
+};
+Button.prototype.handleMouseClick = function() {
+    if (this.isMouseInside()) {
+        this.onClick();
+    }
+};
+/*Buttons*/
+var arvco = new Button({
+    x:125,
+    y:cany*13/40,
+    width:200,
+    height:50,
+    color:color(161, 66, 161),
+    label:"Arrows Vs. Computer",
+    TexSize:18,
+    onClick: function(){
+        ar=1;
+        play = 1;
+    }
+});
+var wsvco = new Button({
+    x:125,
+    y:cany*19/40,
+    width:200,
+    height:50,
+    color:color(161, 66, 161),
+    label:"AWSD Vs. Computer",
+    onClick: function(){
+        ws=1;
+        play = 1;
+    }
+});
+var movco = new Button({
+    x:125,
+    y:cany*5/8,
+    width:200,
+    height:50,
+    color:color(161, 66, 161),
+    label:"Mouse Vs. Computer",
+    onClick: function(){
+        mo=1;
+        play = 1;
+    }
+});
+var movar = new Button({
+    x:125,
+    y:cany*31/40,
+    width:200,
+    height:50,
+    color:color(161, 66, 161),
+    label:"Mouse Vs. Arrows",
+    onClick: function(){
+        twop=1;
+        play = 1;
+    }
+});
+var instructions = new Button({
+    x:125,
+    y:cany*37/40,
+    width:200,
+    height:50,
+    color:color(161, 66, 161),
+    label:"Instructions",
+    onClick: function(){
+        instruct = 1;
+    }
+});
+var store = new Button({
+    x:125,
+    y:87,
+    width:100,
+    height:30,
+    color:color(1, 255, 0),
+    label:"Store",
+    TexSize:22,
+    onClick: function(){
+        play = -1;
+    }
+});
+var p1Speed = new Button({
+    x:65,
+    y:140,
+    width:115,
+    height:30,
+    color:color(255, 0, 51),
+    label:"Faster $25",
+    onClick: function(){
+        if(p1extraSpeed<10&&yuans>=25){
+            p1extraSpeed+=1;
+            yuans-=25;
+        }
+        if(yuans<25){
+            MoneySize=75;
+        }
+    }
+});
+var p1rancolor = new Button({
+    x:65,
+    y:200,
+    width:115,
+    height:30,
+    color:color(0, 72, 255),
+    label:"Random Color $10",
+    TexSize:12.5,
+    onClick: function(){
+        if(yuans>=10){
+            yuans-=10;
+            p1color[0]=random(0,255);
+            p1color[1]=random(0,255);
+            p1color[2]=random(0,255);
+        }
+        if(yuans<10){
+            MoneySize=75;
+        }
+    }
+});
+var p1long = new Button({
+    x:65,
+    y:260,
+    width:115,
+    height:30,
+    color:color(238, 255, 0),
+    label:"Longer $50",
+    onClick: function(){
+        if(p1h<200&&yuans>=50){
+            p1h+=5;
+            yuans-=50;
+        }
+        if(yuans<50){
+            MoneySize=75;
+        }
+    }
+});
+var p2Speed = new Button({
+    x:195,
+    y:140,
+    width:115,
+    height:30,
+    color:color(255, 0, 51),
+    label:"Faster $25",
+    onClick: function(){
+        if(p2extraSpeed<5&&yuans>=25){
+            p2extraSpeed+=1;
+            yuans-=25;
+        }
+        if(yuans<25){
+            MoneySize=75;
+        }
+    }
+});
+var p2rancolor = new Button({
+    x:195,
+    y:200,
+    width:115,
+    height:30,
+    color:color(0, 72, 251),
+    label:"Random Color $10",
+    TexSize:12.5,
+    onClick: function(){
+        if(yuans>=10){
+            p2color[0]=random(0,255);
+            p2color[1]=random(0,255);
+            p2color[2]=random(0,255);
+            yuans-=10;
+        }
+        if(yuans<10){
+            MoneySize=75;
+        }
+    }
+});
+var p2long = new Button({
+    x:195,
+    y:260,
+    width:115,
+    height:30,
+    color:color(238, 255, 0),
+    label:"Longer $50",
+    onClick: function(){
+        if(p2h<200&&yuans>=50){
+            p2h+=5;
+            yuans-=50;
+        }
+        if(yuans<50){
+            MoneySize=75;
+        }
+    }
+});
+var BallSpeed = new Button({
+    x:330,
+    y:140,
+    width:130,
+    height:30,
+    color:color(255, 0, 51),
+    label:"Faster Ball $20",
+    TexSize:15,
+    onClick: function(){
+        if(BallResetVel<10&&yuans>=20){
+            BallResetVel+=0.5;
+            yuans-=20;
+        }
+        if(yuans<20){
+            MoneySize=75;
+        }
+    }
+});
+var Ballrancolor = new Button({
+    x:330,
+    y:200,
+    width:130,
+    height:30,
+    color:color(0, 72, 255),
+    label:"Random Ball Color $30",
+    TexSize:10.5,
+    onClick: function(){
+        if(yuans>=15){
+            yuans-=15;
+            ballcolor[0]=random(0,255);
+            ballcolor[1]=random(0,255);
+            ballcolor[2]=random(0,255);
+        }
+        if(yuans<15){
+            MoneySize=75;
+        }
+    }
+});
+var BGrancolor = new Button({
+    x:330,
+    y:260,
+    width:130,
+    height:30,
+    color:color(238, 255, 0),
+    TexSize:10.5,
+    label:"Random Background $30",
+    onClick: function(){
+        if(yuans>=30){
+            yuans-=30;
+            GameBGColor[0]=random(0,255);
+            GameBGColor[1]=random(0,255);
+            GameBGColor[2]=random(0,255);
+        }
+        if(yuans<30){
+            MoneySize=75;
+        }
+    }
+});
+var Deposit$10 = new Button({
+    x:63,
+    y:50,
+    width:120,
+    height:30,
+    color:color(250, 129, 0),
+    label:"Deposit $10",
+    TexSize:15,
+    onClick: function(){
+        if(num.length===16){
+            yuans+=10;
+        }
+    }
+});
+var Deposit$50 = new Button({
+    x:195,
+    y:50,
+    width:120,
+    height:30,
+    color:color(250, 129, 0),
+    label:"Deposit $50",
+    TexSize:15,
+    onClick: function(){
+        if(num.length===16){
+            yuans+=50;
+        }
+    }
+});
+var Deposit$100 = new Button({
+    x:325,
+    y:50,
+    width:120,
+    height:30,
+    color:color(250, 129, 0),
+    label:"Deposit $100",
+    TexSize:15,
+    onClick: function(){
+        if(num.length===16){
+            yuans+=100;
+        }
+    }
+});
+var reset = new Button({
+    x:335,
+    y:382,
+    width:125,
+    height:30,
+    color:color(1, 255, 0),
+    label:"Reset stats",
+    onClick: function(){
+        BallResetVel = 4;
+        p1extraSpeed = 0;
+        p2extraSpeed = 0;
+        p1h=100;
+        p2h=100;
+        ballcolor[0]=255;
+        ballcolor[1]=255;
+        ballcolor[2]=255;
+        GameBGColor[0]=0;
+        GameBGColor[1]=0;
+        GameBGColor[2]=0;
+        p1color[0]=255;
+        p1color[1]=255;
+        p1color[2]=255;
+        p2color[0]=255;
+        p2color[1]=255;
+        p2color[2]=255;
+    }
+});
+var back = new Button({
+    x:43,
+    y:382,
+    width:80,
+    height:30,
+    color:color(1, 255, 0),
+    label:"Back",
+    TexSize:22,
+    onClick: function(){
+        play = 0;
+    }
+});
+var restartRound = new Button({
+    x:43,
+    y:cany*19/20,
+    width:80,
+    height:30,
+    color:color(161, 66, 161),
+    label:"Restart",
+    onClick: function(){
+        ball.x = canx/2;
+        ball.y= cany/2;
+        ball.xvel=ball.xvel/abs(ball.xvel)*-3;
+        ball.yvel=ball.yvel/abs(ball.yvel)*-3;
+    }
+});
+var quit = new Button({
+    x:357,
+    y:cany*19/20,
+    width:80,
+    height:30,
+    color:color(161, 66, 161),
+    label:"Quit",
+    onClick: function(){
+        play = 0;
+        ws = 0;
+        ar = 0;
+        mo = 0;
+        twop=0;
+        player1Score=0;
+        player2Score=0;
+        ball.x = canx/2;
+        ball.y= cany/2;
+        ball.xvel=ball.xvel/abs(ball.xvel)*-3;
+        ball.yvel=ball.yvel/abs(ball.yvel)*-3;
+        win=0;
+    }
+});
+/*Makes the buttons work*/
+mouseClicked = function() {
+    if (play===0){
+        store.handleMouseClick();
+        arvco.handleMouseClick();
+        wsvco.handleMouseClick();
+        movco.handleMouseClick();
+        movar.handleMouseClick();
+        instructions.handleMouseClick();
+    }
+    else if(play===1){
+        restartRound.handleMouseClick();
+        quit.handleMouseClick();
+    }
+    else if(play===-1){
+        back.handleMouseClick();
+        reset.handleMouseClick();
+        p1Speed.handleMouseClick();
+        p1rancolor.handleMouseClick();
+        p1long.handleMouseClick();
+        p2Speed.handleMouseClick();
+        p2rancolor.handleMouseClick();
+        p2long.handleMouseClick();
+        BallSpeed.handleMouseClick();
+        Ballrancolor.handleMouseClick();
+        BGrancolor.handleMouseClick();
+        Deposit$10.handleMouseClick();
+        Deposit$50.handleMouseClick();
+        Deposit$100.handleMouseClick();
+    }
+};
+keyReleased = function(){
+	keyIsPressed=false;
+	if(mouseY<50&&play===-1){
+        if((num.length<16)&&(keyCode<60&&keyCode>47)){
+            num.push(key);
+        }
+        else if (keyCode===8||keyCode===37){
+            num.pop();
+        }
+    }
+    else if((mouseY<30&&play===1)||(mouseY<300&&mouseY>40&&play===-1)){
+        if(mouseX<canx/2){
+            if((p1name.length<10)&&((keyCode<91&&keyCode>47)||keyCode===32)){
+                p1name.push(key);
+            }
+            else if (keyCode===8||keyCode===37){
+                p1name.pop();
+            }
+        }
+        if(mouseX>canx/2){
+            if((p2name.length<10)&&((keyCode<91&&keyCode>47)||keyCode===32)){
+                p2name.push(key);
+            }
+            else if (keyCode===8||keyCode===37){
+                p2name.pop();
+            }
+        }
+	}
+};
+/*The big draw function!!!!*/
+draw = function() {
+    if(play===0){
+        /*home page to ping pong with button options*/
+        background(45, 45, 45);
+        strokeWeight(2);
+        stroke(0,0,0);
+        store.draw();
+        wsvco.draw();
+        arvco.draw();
+        movco.draw();
+        movar.draw();
+        instructions.draw();
+        fill(0, 0, 0);
+        rect(197,cany*7/40-7,270,5);
+        textFont(c,50);
+        fill(255, 0, 0);
+        text("Ping Pong",197,cany*7/40-28);
+        /*/Blob of jelliness*/
+        if (instruct===0){
+            noStroke();
+            fill(45, 45, 45);/*grey for invisible rectangle*/ 
+            rect(blobX-10,blobY,160,315);/*Clear the screen*/
+            /*Hair*/
+            for (var i = 0; i < 80; i+=10){
+                fill(0, 0, 0);
+                stroke(212, 137, 23);
+                strokeWeight(3);
+                if (i<40){
+                    rect(blobX-40+sinY+i,blobY-i/2-75+dubBounce,2,40);
+                }
+                else{
+                   rect(blobX-40+sinY+i,blobY+i/2-110+dubBounce,2,40); 
+                }
+            }
+            /*Body*/
+            strokeWeight(5);
+            stroke(0, 0, 0);
+            line(sinY+blobX,blobY+110,blobX,blobY+65);// Body frame 
+            line(sinY+blobX,blobY+85,blobX-60,blobY+75);// Right arm 
+            line(sinY+blobX,blobY+85,blobX+60,blobY+75);// Left arm 
+            line(sinY+blobX,blobY+110,blobX+30,blobY+130);// Right leg 
+            line(sinY+blobX,blobY+110,blobX-30,blobY+130); /* Left leg */
+            /*Blob stuff (color ect)*/
+            fill(183, 0, 255); 
+            stroke(168, 0, 201); 
+            strokeWeight(7); 
+            sinY = (sin(angle) * radius);
+            dubBounce = (sinY * sin(angle))*-1;  
+            beginShape();
+            vertex(sinY+blobX,dubBounce+blobY-70);
+            bezierVertex(sinY+54+blobX,dubBounce+blobY-70,90+blobX,64+blobY,blobX,64+blobY);
+            bezierVertex(blobX-90,64+blobY,sinY+blobX-87,dubBounce+blobY-70,sinY+blobX,dubBounce+blobY-70);
+            endShape();
+            /*mouth*/
+            stroke(0, 0, 0);
+            strokeWeight(3);
+            fill(255, 0, 0);
+            ellipse(blobX+sinY,blobY+dubBounce,20,20);
+            strokeWeight(2);
+            fill(12, 18, 204);
+            eyesBlink = floor(random(120, 340));
+            if(frameCount >= eyesBlink){
+                frameCount = -6; /*eye blink duration*/
+            } 
+            if(frameCount < 0){
+                ellipse(sinY+blobX-20,dubBounce+blobY-34,26,2);
+                ellipse(sinY+20+blobX,dubBounce+blobY-34,26,2);
+            }
+            if(frameCount > 0){
+                ellipse(sinY+blobX-20,dubBounce+blobY-34,26,20);
+                ellipse(sinY+blobX+20,dubBounce+blobY-34,26,20);
+                strokeWeight(7);
+                fill(219, 20, 20);
+                ellipse(sinY+blobX+20,dubBounce+blobY-34,5, 5);
+                ellipse(sinY+blobX-20,dubBounce+blobY-34,5, 5);
+            }
+            /*Update angle. This is what animates everything.*/
+            angle += blobspeedincrease;
+            angle = angle % 360;
+        }
+        else if(instruct===1){
+            textFont(c,14);
+            strokeWeight(1);
+            fill(176, 44, 176);
+            rect(313,cany*7/40+175,160,315);
+            fill(8, 8, 8);
+            text("Hit the ball with the paddle. Don't let the ball go out or your opponent gains a point. You can change the color of the ball and the paddles in the store. If you hover over your name you can change it (press the left arrow key not backspace to delete characters). Good luck!",238,cany*7/40+15,154,315);
+        }
+    }   
+    else if (play ===-1){
+        background(2, 110, 9);
+        textFont(createFont("monospace"),20);
+        text("Credit card Number:",numX+48,17);
+        for(var i = 0; i<num.length; i++){
+            text(num[i],i*10+218,17);
+            rect(numX+190+num.length*10+numX*-0.5,17,2,20);
+        }
+        for(var i = 0; i<p1name.length; i++){
+            text(p1name[i],i*10+19,105);
+        }
+        for(var i = 0; i<p2name.length; i++){
+            text(p2name[i],i*10+141,105);
+        }
+        text("Misc",304,105);
+        if(MoneySize===75){
+            MoneyColor[0]=255;
+        }
+        if(MoneySize>40){
+            MoneySize-=0.07;
+            
+        }
+        if(MoneySize<=40){
+            MoneyColor[0]=0;
+            MoneySize=40;
+        }
+        textSize(MoneySize);
+        fill(MoneyColor[0], MoneyColor[1], MoneyColor[2]);
+        text("Yuans : "+yuans,202,330);
+        fill(0, 0, 0);
+        line(398,88,398,286);
+        line(3,88,3,286);
+        line(3,88,396,88);
+        line(3,119,396,119);
+        line(3,167,396,167);
+        line(3,232,396,232);
+        line(3,287,396,287);
+        line(129,87,129,286);
+        line(260,87,260,286);
+        strokeWeight(2);
+        back.draw();
+        p1Speed.draw();
+        if(p1extraSpeed>=10){
+            fill(255, 0, 0);
+            rect(65,141,119,36);
+            fill(0, 0, 0);
+            textSize(25);
+            text("Maxed",65,138);
+        }
+        p1rancolor.draw();
+        p1long.draw();
+        if(p1h>=200){
+            fill(255, 0, 0);
+            rect(65,262,119,36);
+            fill(0, 0, 0);
+            textSize(25);
+            text("Maxed",65,260);
+        }
+        p2Speed.draw();
+        if(p2extraSpeed>=5){
+            fill(255, 0, 0);
+            rect(195,141,119,36);
+            fill(0, 0, 0);
+            textSize(25);
+            text("Maxed",197,138);
+        }
+        p2rancolor.draw();
+        p2long.draw();
+        if(p2h>=200){
+            fill(255, 0, 0);
+            rect(195,262,119,36);
+            fill(0, 0, 0);
+            textSize(25);
+            text("Maxed",192,260);
+        }
+        BallSpeed.draw();
+        if(BallResetVel>=10){
+            fill(255, 0, 0);
+            rect(329,142,131,36);
+            fill(0, 0, 0);
+            textSize(25);
+            text("Maxed",338,137);
+        }
+        Ballrancolor.draw();
+        BGrancolor.draw();
+        reset.draw();
+        Deposit$10.draw();
+        Deposit$50.draw();
+        Deposit$100.draw();
+    }
+    else if (play===1&&win!==2){
+        /*Draw the environment*/
+        background(GameBGColor[0],GameBGColor[1], GameBGColor[2]);
+        if(keyIsPressed===true&&win===0){
+            if(keyCode===UP){
+                if(ar===1){
+                    movePlayer1Up();
+                }
+                if(twop===1){
+                    movePlayer1Up();
+                }
+            } 
+            if (keyCode===DOWN){
+                if(ar===1){
+                    movePlayer1Down();
+                }
+                if(twop===1){
+                    movePlayer1Down();
+                }
+            } 
+            if (key.toString() === 'w'){
+                if(ws===1){
+                    movePlayer1Up();
+                }
+            } 
+            if (key.toString() === 's'){
+                if(ws===1){
+                    movePlayer1Down();
+                }
+            } 
+            if (key.toString() === 'z'){
+                player1Score+=0.09;
+            } 
+            if (key.toString() === 'm'){
+                player2Score+=0.09;
+            } 
+        }
+        quit.draw();
+        restartRound.draw();
+        if (mo===1&&win===0){
+            mousecontrolp1();
+        }
+        if(twop===1){
+            mousecontrolp2();
+        }
+        if (twop===0&&win===0){
+            computercontrol();
+        }
+        drawPlayers();
+        drawScores();
+        stroke(255, 255, 255);
+        strokeWeight(1);
+        line(width/2, 0, width/2, height);
+        fill(0, 0, 0);
+        stroke(0,355,0);
+        if(player1Score+player2Score<1){
+            rect(textxpos,99,315,64,5);
+            textSize(20);
+            fill(255, 0, 0);
+            text("Click anywhere to start ball",textxpos,100);
+        }
+        stroke(0,0,0);
+        /*You win if your score is bigger than 10*/
+        if(player1Score > 10){
+            fill(255, 0, 0);
+            rect(205,93,415,300);
+            textSize(50);
+            fill(0, 0, 255);
+            for(var i = 0; i<p1name.length; i++){
+                text(p1name[i],i*27+51,99);
+            }
+            text("Won!",200,163);
+            win=1;
+        }
+        if(player2Score > 10){
+            fill(255, 0, 0);
+            rect(205,93,415,300);
+            textSize(40);
+            fill(0, 0, 255);
+            for(var i = 0; i<p2name.length; i++){
+                text(p2name[i],i*27+51,99);
+            }
+            text("Won!",207,174);
+            win=1;
+        }
+        /*/Draw the ball/*/
+        if(win===0){
+            ball.draw();
+            if (!gameStarted) {
+                if (mouseIsPressed&&mouseY<382&&mouseY>30) {
+                    gameStarted = true;
+                }
+            return;
+            }
+            ball.move();
+        }
+    }
+    if(win===1){
+        yuans+=1;
+        win=2;
+    }
+};
+}
+        if (typeof draw !== 'undefined') processing.draw = draw;
+    });
+    </script>
+    </body>
+</html>
