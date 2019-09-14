@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Alek's Game</title>    
+        <script src= "http://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js">
+        </script>
+        <style>
+        canvas{position: relative; left:50px;}
+        body{background-color: black}
+        h1{background-color: red; color:black; position: relative; left:0px; width:100%; text-align: center;}
+        </style>
+    </head>
+    <body>
+        <!---<h1>A Cool game made by a cool person</h1>--->
+        <canvas id = "canvas" width =600 height =400></canvas>
+    <script>// position of the ball
+    var canx = 600;
+    var cany = 600;
+    var canvas = document.getElementById("canvas");
+    var processing = new Processing(canvas, function(processing) {
+        processing.size(canx, cany);
+        processing.background(0xFFF);
+        var mouseIsPressed = false;
+        processing.mousePressed = function () {
+            mouseIsPressed = true; 
+        };
+        processing.mouseReleased = function () {
+            mouseIsPressed = false; 
+        };
+        var keyIsPressed = false;
+        processing.keyPressed = function () { 
+            keyIsPressed = true; 
+        };
+        processing.keyReleased = function () { 
+            keyIsPressed = false; 
+        };
+        function getImage(s) {
+            var url = "https://www.kasandbox.org/programming-images/" + s + ".png";
+            processing.externals.sketch.imageCache.add(url);
+            return processing.loadImage(url);
+        }
+        with (processing) { 
+//********************ALEK*********************//
+/*confetii win variables*/
+var confetiY = [];
+var confetiSpeed = [];
+var confetiR = [];
+var confetiG = [];
+var confetiB = [];
+/*confetii*/
+for(var i = 0; i<1640;i+=1){
+    confetiY.push(random(-200,-25));
+    confetiSpeed.push(random(0.75,2.25));
+    confetiR.push(random(0,255));
+    confetiG.push(random(0,255));
+    confetiB.push(random(0,255));
+}
+/*start screen animation variables*/
+var crazyXSize = 10;
+var up = 1;
+var LineXOne = 7;
+/*what screen you are on*/
+var start = 0;
+var cheat = 0;
+/*name Variables*/
+var name = [];
+var nameSize = 20;
+var nameX = 13;
+var nameY = 528;
+var done = 0;
+var prepareGame = 1;
+var Playing = 0;
+var WinCombos=[[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,5,7]];
+var NextMoveWin=[[2,3,1],[5,6,4],[7,8,9],[1,4,7],[2,5,8],[3,6,9], [1,5,9],[3,5,7],[1,3,2],[4,6,5],[7,9,8],[1,7,4],[8,5,2],[3,9,6],[9,5,1],[3,7,5],[1,2,3],[4,5,6],[9,8,7],[7,4,1],[2,8,5],[9,6,3],[1,9,5],[7,5,3]];
+var GameWon=['No one','Won'];
+var turn;
+var gameRound=1;
+var NewBoard;
+var oked=0;
+var PrepareGame=function(){
+    done = 0;
+    oked=0;
+    start = 0;
+    cheat = 0;
+    gameRound=1;
+    GameWon=['No one','Won'];
+    NewBoard=[];
+    for(var i =0; i<10; i++){
+        NewBoard.push(str(i));
+    }
+    turn = ['computer','player'][round(random(0,1))];
+    return turn;
+};
+PrepareGame();
+var Board = function(){};
+Board.prototype.drawit = function(board){
+    //Draws board lines
+    noStroke();
+    fill(0, 0, 0);
+    rect(width/3,0,width/50,width,100);
+    rect(2*width/3,0,width/50,width,100);
+    rect(0,width/3,width,width/50,100);
+    rect(0,2*width/3,width,width/50,100);
+    //Draws the board state, what symbols are on it (only if you haven't won yet).
+    textSize(100);
+    for(var s = 0; s<3; s++){
+        if(board[s+1]!==str(s+1)){
+            text(board[s+1],width*s/3+width/10, height/4);
+        }
+        if(board[s+4]!==str(s+4)){
+            text(board[s+4],width*s/3+width/10, height/1.8);
+        }
+        if(board[s+7]!==str(s+7)){
+            text(board[s+7],width*s/3+width/10, height/1.1);
+        }
+    }
+};
+Board.prototype.check = function(board){
+    if(turn==='player'&&start===1&&oked===2){
+        //If in first third of board horizontally
+        if(mouseX<0+width/3){
+            //If in first third of board vertically
+            if(mouseY<width/3){
+                if(board[1]==='1'){
+                    board[1] = 'X'; 
+                    turn = 'computer';
+                    gameRound+=1;
+                }
+            }
+            //If in second third of board vertically
+            if(mouseY>width/3&&mouseY<2*width/3){
+                if(board[4]==='4'){
+                    board[4] = 'X'; 
+                    turn = 'computer';
+                    gameRound+=1;
+                }
+            }
+            //If in last third of board vertically
+            if(mouseY>2*width/3){
+                if(board[7]==='7'){
+                    board[7]='X';
+                    turn = 'computer';
+                    gameRound+=1;
+                }
+            }
+        }
+        //If in second third of board horizontally
+        if(mouseX>width/3&&mouseX<2*width/3){
+            //If in first third of board vertically
+            if(mouseY<width/3){
+                if(board[2]==='2'){
+                    board[2] = 'X'; 
+                    turn = 'computer';
+                    gameRound+=1;
+                }
+            }
+            //If in second third of board vertically
+            if(mouseY>width/3&&mouseY<2*width/3){
+                if(board[5]==='5'){
+                    board[5] = 'X'; 
+                    turn = 'computer';
+                    gameRound+=1;
+                }
+            }
+            //If in last third of board vertically
+            if(mouseY>2*width/3){
+                if(board[8]==='8'){
+                    board[8] = 'X'; 
+                    turn = 'computer';
+                    gameRound+=1;
+                }
+            }
+        }
+        //If in last third of board horizontally
+        if(mouseX>2*width/3){
+            //If in first third of board vertically
+            if(mouseY<width/3){
+                if(board[3]==='3'){
+                    board[3] = 'X'; 
+                    turn = 'computer';
+                    gameRound+=1;
+                }
+            }
+            //If in second third of board vertically
+            if(mouseY>width/3&&mouseY<2*width/3){
+                if(board[6]==='6'){
+                    board[6] = 'X'; 
+                    turn = 'computer';
+                    gameRound+=1;
+                }
+            }
+            //If in last third of board vertically
+            if(mouseY>2*width/3){
+                if(board[9]==='9'){
+                    board[9] = 'X'; 
+                    turn = 'computer';
+                    gameRound+=1;
+                }
+            }
+        }
+    }
+};
+Board.prototype.ComputerChoice = function(board){
+    var compmov=0;
+    for(var i=1;i<=9;i+=2){
+        if(board[i]!=='X'&&board[i]!=='O'){compmov=i;}
+    }
+    if (gameRound===2 && board[5]==='5'){compmov=5;}
+    if(gameRound===3){
+        if(board[1]==='X'){
+            compmov=3;
+        }
+        if(board[7]==='X'||board[3]==='X'||board[5]==='X'){
+            compmov=1;
+        }
+    }
+    if(board[5]==='O'){
+        if(board[1]==='X'&&board[9]==='X'){
+            for(var i=2;i<=8;i+=2){
+                if(board[i]!=='X'&&board[i]!=='O'){compmov=i;}
+            }
+        }
+        if(board[3]==='X'&&board[7]==='X'){
+            for(var i=2;i<=8;i+=2){
+                if(board[i]!=='X'&&board[i]!=='O'){compmov=i;}
+            }
+        }
+    }
+    for(var i =0;i<NextMoveWin.length;i++){
+        if(((board[NextMoveWin[i][0]])==='X') && ((board[NextMoveWin[i][1]])==='X')&&((board[NextMoveWin[i][2]])===str(NextMoveWin[i][2]))){
+            compmov=NextMoveWin[i][2];
+        }
+        if(((board[NextMoveWin[i][0]])==='O')&&((board[NextMoveWin[i][1]])==='O')&&((board[NextMoveWin[i][2]])===str(NextMoveWin[i][2]))){
+            compmov=NextMoveWin[i][2];
+            break;
+        }
+    }
+    if (compmov===0||cheat===4){
+        for(i=0;i<100;i++){
+            compmov=round(random(1,9));
+            if (board[compmov]===str(compmov)){
+                break;
+            }
+        }
+    }
+    board[compmov]='O';
+    turn = 'player';
+    gameRound+=1;
+};
+Board.prototype.winner = function(board){
+    if(gameRound>9){GameWon[0]='cat';}
+    for(var i=0;i<WinCombos.length;i++){
+        if(((board[WinCombos[i][0]])==='X') &&((board[WinCombos[i][1]])==='X')&&((board[WinCombos[i][2]])==='X')){
+            GameWon[0]='player';
+            return GameWon;
+        }
+        if(((board[WinCombos[i][0]])==='O')&&((board[WinCombos[i][1]])==='O') &&((board[WinCombos[i][2]])==='O')){
+            GameWon[0]='computer';
+            return GameWon;
+        }
+    }
+};
+var TheBoard = new Board();
+keyReleased = function(){
+    if(mouseY<height/5&&mouseX>width/5){
+        if (key.toString() === 'a'&&cheat===0) {
+            cheat=1;
+        }
+        if (key.toString() === 'l'&&cheat===1) {
+            cheat=2;
+        }
+        if (key.toString() === 'e'&&cheat===2) {
+            cheat=3;
+        }
+        if (key.toString() === 'k'&&cheat===3) {
+            cheat=4;
+        }
+        if (key.toString() === 'c') {
+            cheat=0;
+        }
+    }
+    if(done===0&&mouseY>250){
+        if((name.length*nameSize/2+nameX*5.2<135)&&((keyCode<91&&keyCode>47)||keyCode===32)){
+            name.push(key);
+        }
+        else if (keyCode===8||keyCode===37){
+            name.pop();
+        }
+    }
+};
+var draw = function(){
+    if(start===0){
+        frameRate(20);
+        background(255, 255, 255);
+        textSize(width/13.6);
+        //black text
+        fill(0, 0, 0);
+        text("Made by:",5,12,284,200);
+        text("ALEK",448,12,284,200);
+        textSize(15);
+        text("If you get three X's in a row you win.",45,261,127,207);
+        text("If the computer gets three O's in a row the computer wins.",444,261,127,207);
+        textSize(46);
+        text("Tick     Tack     Toe",219,29,200,400);
+        textSize(18);
+        noFill();
+        stroke(0, 0, 0);
+        strokeWeight(3);
+        rect(7,504,188,30);
+        fill(0, 0, 0);
+        textFont(createFont("monospace"),nameSize);
+        text("Name: ",nameX,nameY);
+        if(done===0){
+            for(var i = 0; i<name.length; i++){
+                text(name[i],i*nameSize/2+nameX*6.5,nameY);
+            }
+            rect(nameX+nameSize*4.0+name.length*nameSize/2+nameX*-0.5,nameY-nameSize/1.1,nameSize/10,nameSize);
+            stroke(255, 9, 0);
+            rect(236,351,122,30);
+            fill(255, 0, 0);
+            text("Continue",254,374);
+            if(name.length>1&&mouseIsPressed&&mouseX>236&&mouseY>351&&mouseX<358&&mouseY<381){
+                done = 1;
+                start = 1;
+            }
+        }
+        fill(0,0,0);
+        textSize(crazyXSize);
+        if(crazyXSize<300&&up===1){
+            crazyXSize+=random(0,4);
+        }
+        if(crazyXSize>=300&&up===1){
+            up=0;
+        }
+        if(up===0&&crazyXSize>10){
+            crazyXSize-=random(0,4);
+        }
+        if(crazyXSize<10&&up===0){
+            up=1;
+        }
+        text("X",223,596);
+        stroke(crazyXSize-random(0,50), crazyXSize-random(0,50), crazyXSize-random(0,50));
+        strokeWeight(crazyXSize/50+6);
+        ellipse(500,500,cos(LineXOne)*150,cos(LineXOne)*130);
+    }
+    if(start===1&&GameWon[0]==='No one'){
+        if(keyIsPressed){
+            if(key.toString()==='o'&&oked===0){
+                oked=1;                
+            }
+            if(key.toString()==='k'&&oked===1){
+                oked=2;
+            }
+        }
+        background(214, 214, 214);
+        textSize(40);
+        fill(0,0,0);
+        for(var i = 0; i<name.length; i++){text(name[i],width/100+i*20,height/12);}
+        text("   VS.    Computer",width/3,height/12);
+        if(oked!==2){
+            textSize(30);
+            text("I'm Poe the computer.",12,279,300,600);
+            text("I'm probably going to win.",227,246,199,600);
+            text("Type ok to begin.",422,279,244,600);
+        }
+        mouseReleased = function(){TheBoard.check(NewBoard);};
+        TheBoard.winner(NewBoard);
+        if(turn==='computer'&&oked===2&&GameWon[0]==='No one'){TheBoard.ComputerChoice(NewBoard);}
+        TheBoard.winner(NewBoard);
+    }
+    if(GameWon[0]==='cat'){
+        background(100, 25, 68);
+        fill(0, 0, 0);
+        textSize(69);
+        text("You          tied.",213,92,334,400);
+        textSize(23);
+        text("RESTART GAME",435,35);
+        noFill();
+        rect(429,8,163,35);
+        if(mouseIsPressed && width/1.4 < mouseX && mouseX < width/1.05 && height/75 < mouseY && mouseY < height/14){
+            PrepareGame();
+        }
+    } 
+    if(GameWon[0]==='computer'){
+        background(0, 255, 68);
+        fill(0, 0, 0);
+        textSize(69);
+        text("You          lose.",213,92,334,400);
+        textSize(23);
+        text("RESTART GAME",435,35);
+        noFill();
+        rect(429,8,163,35);
+        if(mouseIsPressed && width/1.4 < mouseX && mouseX < width/1.05 && height/75 < mouseY && mouseY < height/14){
+            PrepareGame();
+        }
+    }
+    if(GameWon[0]==='player'){
+        background(255, 234, 0);
+        noStroke();
+        for(var i = 0; i<1640;i+=1){
+            fill(confetiR[i], confetiG[i], confetiB[i]);
+            rect(i/2.8,confetiY[i],3,7);
+        }
+        for(var i = 0; i<confetiY.length;i+=20){
+            confetiY[i]+=confetiSpeed[i];
+            if(confetiY[i]>height*1.25){
+                confetiY[i] = random(-75,-25);
+                confetiSpeed[i] = random(0.75,2.25);
+            }
+        }
+        textSize(75);
+        fill(255, 0, 0);
+        text("YOU   WON!",224,99,200,400);
+        fill(0, 0, 0);
+        textSize(23);
+        text("RESTART GAME",434,35);
+        textSize(20);
+        stroke(0, 0, 0);
+        noFill();
+        rect(429,8,163,35);
+        if(mouseIsPressed && width/1.4 < mouseX && mouseX < width/1.05 && height/75 < mouseY && mouseY < height/14){
+            PrepareGame();
+        }
+    }
+    TheBoard.drawit(NewBoard);
+};
+}
+        if (typeof draw !== 'undefined') processing.draw = draw;
+    });
+    </script>
+    </body>
+</html>
